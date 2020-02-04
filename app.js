@@ -13,7 +13,7 @@ app.use('/api', graphqlHttp({
             events: [String!]!
         }
         type RootMutation {
-            createEvent(name: String): Sting
+            createEvent(name: String): String
         }
         schema {
             query: RootQuery
@@ -28,8 +28,9 @@ app.use('/api', graphqlHttp({
             const eventName = args.name;
             return eventName;
         }
-
     },
-}));
+    graphiql: true
+    })
+);
 
 app.listen(3000);
