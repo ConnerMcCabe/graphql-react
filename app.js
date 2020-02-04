@@ -10,17 +10,26 @@ app.use(bodyParser.json());
 app.use('/api', graphqlHttp({
     schema: buildSchema(`
         type RootQuery {
-
+            events: [String!]!
         }
         type RootMutation {
-
+            createEvent(name: String): Sting
         }
         schema {
             query: RootQuery
             mutation: RootMutation
         }
     `),
-    rootValue: {},
+    rootValue: {
+        events: () => {
+            return ['Cooking Night', 'Movie Tuesday', 'Little Timmy Birthday Party'];
+        },
+        createEvent: (args) => {
+            const eventName = args.name;
+            return eventName;
+        }
+
+    },
 }));
 
 app.listen(3000);
