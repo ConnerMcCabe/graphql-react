@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
+
 
 const app = express();
 
@@ -37,20 +39,24 @@ app.use('/api', graphqlHttp({
     `),
     rootValue: {
         events: () => {
-            return ['Cooking Night', 'Movie Tuesday', 'Little Timmy Birthday Party'];
+            return events;
         },
         createEvent: (args) => {
             const event = {
                 _id: Math.random().toString(),
-                title: args.title,
+                title: args.eventInput.title,
                 description: args.description,
                 price: +args.price,
                 date: new Date().toISOString()
-            }
+            };
+            events.push(event);
+            return event;
         }
     },
     graphiql: true
     })
 );
+
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-97mno.mongodb.net/test?retryWrites=true&w=majority`)
 
 app.listen(3000);
