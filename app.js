@@ -62,12 +62,28 @@ app.use('/graphql', graphqlHttp({
                 title: args.eventInput.title,
                 description: args.description,
                 price: +args.price,
-                date: new Date(args.eventInput.date)
+                date: new Date(args.eventInput.date),
+                creator: 'tester'
             });
-            return event.save().then(result => {
-                console.log(result);
-                return {...result._doc, _id: event._doc._id.toString() }
-            }).catch(err => {
+            let createdEvent;
+            return event
+                .save()
+                .then(result => {
+                    createdEvent = {...result._doc, _id: event._doc._id.toString() };
+                    return User.findById('tester')
+                
+            })
+            .then(user => {
+                if (!user) {
+                    throw new Error('User not found.');
+                } 
+                user.createEvents.push(event);
+                return user.save();
+            }) 
+            .then(result => {
+                return createdEvent;
+            })   
+            .catch(err => {
                 console.log(err);
                 throw err;
             })
